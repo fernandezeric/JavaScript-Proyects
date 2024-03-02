@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <!-- Grande Midu -->
 <title> Breakout full JS </title>
-
-<style>
-   body {
-    background-color: #4e4e4e;
-   }
-
-   canvas {
-      border: 3px solid rgba(255, 166, 0, 0.719);
-      border-bottom: transparent;
-      border-radius: 4px;
-      background: url('./assets/background.png');
-      margin: 0 auto;
-      display: block;
-   }
-</style>
+<head>
+   <link rel="stylesheet" href="./styles/indexStyle.css">
+</head>
 
 <canvas></canvas>
 
 <img hidden id="sprite" src="./assets/sprite.png" alt="Sprite Arkanoid" />
 <img hidden id="bricks" src="./assets/bricks.png" alt="Sprite Bricks Arkanoid" />
+
+<div>
+   <h4>Score: </h4>
+   <span id="scoreNumberId"></span>
+   <h4>dx: </h4>
+   <span id="ballDxId"></span>
+   <h4>dy: </h4>
+   <span id="ballDyId"></span>
+</div>
 
 <script>
    const canvas = document.querySelector('canvas')
@@ -29,15 +26,26 @@
    const $sprite = document.querySelector('#sprite')
    const $bricks = document.querySelector('#bricks')
 
+   const scoreNumber = document.getElementById('scoreNumberId')
+   const ballDxDocument = document.getElementById('ballDxId')
+   const ballDyDocument = document.getElementById('ballDyId')
+
    canvas.width = 720
-   canvas.height = 480
+   canvas.height = 360
 
    const ballRadius = 3
+
+   const firstLimit = 10
+   let firstLimitFlag = false
+   const secondLimit = 20
+   let secondLimitFlag = false
 
    let ballX = canvas.width/2
    let ballY = canvas.height - 30
    let ballDx = 3
    let ballDy = -3
+
+   let score = 0
 
    const paddleHeight = 10
    const paddleWidth = 50
@@ -78,6 +86,21 @@
     }
   }
 
+   function addScore() {
+      if (score > firstLimit && !firstLimitFlag) {
+         ballDx += 1
+         ballDy += 1
+         firstLimitFlag = true
+         console.log("fristLimitDifficulty")
+      } else if (score > secondLimit && !secondLimitFlag){
+         ballDx += 1
+         ballDy += 1
+         secondLimitFlag = true
+         console.log("secondLimitDifficulty")
+      }
+      score += 1
+   }
+      
    function drawBall() {
       ctx.beginPath()
       ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2)
@@ -148,6 +171,8 @@
             if (isBallSameXAsBrick && isBallSameYAsBrick) {
                ballDy = -ballDy
                currentBrick.status = BRICK_STATUS.DESTROYED
+               // add score
+               addScore()
             }
          }
     }
@@ -181,6 +206,7 @@
       }
       else if (ballY + ballDy > canvas.height - ballRadius) {
          console.log('Game Over')
+         score = 0
          document.location.reload()
       }
       ballX += ballDx
@@ -222,6 +248,12 @@
       }
    }
 
+   function drawScore() {
+      ballDxDocument.innerHTML = ballDx
+      ballDyDocument.innerHTML = ballDy
+      scoreNumber.innerHTML = score
+   }
+
    function draw() {
       cleanCanvas()
       // draws and checks collitions
@@ -229,7 +261,7 @@
       drawBall()
       drawPaddle()
       drawBricks()
-      // drawScore()
+      drawScore()
 
       collisionDetaction()
       ballMovement()

@@ -1,0 +1,17 @@
+body {
+  background-color: #4e4e4e;
+ }
+
+ canvas {
+    border: 3px solid rgba(255, 166, 0, 0.719);
+    border-bottom: transparent;
+    border-radius: 4px;
+    background: url('../assets/background.png');
+    margin: 0 auto;
+    display: block;
+ }
+
+ h4 {
+  display: inline-flex;
+  margin: 10 auto;
+ }
