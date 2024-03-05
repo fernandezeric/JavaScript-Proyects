@@ -5,7 +5,7 @@ Para reutilizar y refrescar conceptos básicos.
 
 ### Run
 ```javascript
-npm install
+npm install 
 node api/server.js
 ```
 
