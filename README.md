@@ -8,6 +8,9 @@ Adempás, contiene express y nodejs.
 [midu](aprendejavascript.dev)
 [js info](javascript.info)
 [mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+linter
+[standardjs](standardjs.com)
 ```
 
 ## 001 Breakout game
