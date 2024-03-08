@@ -1,0 +1,38 @@
+### Recuperar todas las peliculas
+GET http://localhost:3000/movies
+
+### Película por id
+GET http://localhost:3000/movies/6b3b4d6c-4c4e-4881-bfaa-f5d50f9d44fc
+
+### Todas las peliculas por un género
+GET http://localhost:3000/movies?genre=adventure
+
+### Todas las peliculas por un género y un alo
+GET http://localhost:3000/movies?genre=adventure&year=2000
+
+
+### Crear película
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "id": "c906673b-3948-4402-ac7f-73ac3a9e3105",
+  "title": "The Matrix",
+  "year": 2004,
+  "director": "Lana Wachowski",
+  "duration": 136,
+  "poster": "https://i.ebayimg.com/images/g/QFQAAOSwAQpfjaA6/s-l1200.jpg",
+  "genre": ["Action", "Sci-Fi"],
+  "rate": 8.7
+}
+
+### Actualizar una pelicula
+PATCH http://localhost:3000/movies/8fb17ae1-bdfe-45e5-a871-4772d7e526b8
+Content-Type: application/json
+
+{
+  "year": 1999
+}
+
+### Eliminar una película
+DELETE http://localhost:3000/movies/6b3b4d6c-4c4e-4881-bfaa-f5d50f9d44fc
