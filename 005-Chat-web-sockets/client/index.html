@@ -16,8 +16,11 @@
     const messages = document.getElementById('messages')
 
     socket.on('on message', (msg) => {
+      console.log("msg --->", msg)
       const item = `<li>${msg}</li>`
-      messages.insertAdjacentHTML('before', item)
+      messages.insertAdjacentHTML('beforeend', item)
+      // scroll to bottom
+      messages.scrollTop = messages.scrollHeight
     })
 
     form.addEventListener('submit', (e) => {
@@ -96,6 +99,10 @@
       list-style-type: none;
       margin: 0;
       padding: 0;
+      overflow-y: scroll;
+      height: 100%;
+      scroll-behavior: smooth;
+      padding-bottom: 48px;
     }
     #messages > li {
       padding: .5rem 1rem;
