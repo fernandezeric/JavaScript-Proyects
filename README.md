@@ -1,8 +1,6 @@
 # ProjectsJS 🐛
 
-Repositorio con mini proyectos de JavaScript, que tienen como finalidad aprender y mejorar en diversas cuestiones.
-Contiene unn juego hecho completamente con JS, unas API's con express; una simple y una más estructurada con REST y MVC.
-Entre otras cosas 🤓.
+Repositorio con mini proyectos de JavaScript que tienen como finalidad aprender y mejorar.
 
 
 ### JavaScript resources
@@ -15,37 +13,14 @@ linter
 [standardjs](standardjs.com)
 ```
 
-## 001 Breakout game
 
-Juego clásico de romper bloques con una pelota, hecho unicamente con javascript. [Repositorio](https://github.com/fernandezeric/ProjectsJS/tree/main/001-Breakout-game)
+##
 
-
-
-## 002 Simple API REST Express
-
-Una API REST en Express simple para repasar conceptos de nombres de rutas y test rápidos. [Repositorio](https://github.com/fernandezeric/ProjectsJS/tree/main/002-simple-express)
-
-
-
-### 003 Basic Node Librarys
-Elementos básicos de node junto con ejemplos. [Repositorio](https://github.com/fernandezeric/ProjectsJS/tree/main/003-Basic-node-librarys)
-
-Las librerías:
-- os
-- fs
-- path
-- process
-- http
-
-
-### 004 REST API con Express
-
-Una API REST hecha con express. [Repositorio](https://github.com/fernandezeric/ProjectsJS/tree/main/004-REST-API-Express)
-
-Esta construida con MVC(modelo-vista-controlador), para abstraer responsabilidades.
-
-Tiene **zod** para la comprobación de datos.
-
-### 005 Chat con web sockets
-
-Usa morgan para ver log en dev y el web socket con socket.io (alternativa a ws)
+|  #   | Proyecto         | Descripción                                                              |Código                                                                                                                                                                                   |
+| --- | ---------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001 | **breakout-game** | Breakout/Arkanoid controlado por teclado (js/css)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)](https://github.com/fernandezeric/ProjectsJS/tree/main/001-Breakout-game) |
+| 002 | **simple-express** | Estructura básica de express (express)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)](https://github.com/fernandezeric/ProjectsJS/tree/main/002-simple-express) |
+| 003 | **basic-node** | Librerías básicas de NodeJs (nodejs)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)](https://github.com/fernandezeric/ProjectsJS/tree/main/003-Basic-node-librarys) |
+| 004 | **rest-api-express** | Api-rest utilizando MVC como arquitectura (express/zod)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)](https://github.com/fernandezeric/ProjectsJS/tree/main/004-REST-API-Express) |
+| 005 | **chat-web-sockets** | Ejemplo base sobre web sockets (nodejs)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)](https://github.com/fernandezeric/ProjectsJS/tree/main/005-Chat-web-sockets) |
+| 006 | **monkey-type-clone** | (js/css)| [![GitHub Badge](https://img.shields.io/badge/Código-181717?logo=github&logoColor=fff&style=flat-square)]() |

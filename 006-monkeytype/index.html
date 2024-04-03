@@ -1,0 +1,275 @@
+<!-- Grand Midudev -->
+<title>Monkey Type clone</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --green: #00b755;
+    --yellow: #daaf38;
+    --red: #ca4754;
+    --black: #222;
+    --gray: #999;
+  }
+
+  body {
+    background: var(--black);
+    font-family: 'Times New Roman', Times, serif, monospace;
+    display: grid;
+    padding: 32px;
+    place-content: center;
+  }
+
+  section {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+  }
+
+  time {
+    color: var(--yellow);
+  }
+
+  input {
+    z-index: -999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 8px;
+    margin: 0;
+  }
+
+  x-letter {
+    color: var(--gray);
+    position: relative;
+
+    &.active::before {
+      content: '|';
+      color: var(--yellow);
+      font-size: 14px;
+      position: absolute;
+      left: -65%;
+      animation: 1s blink infinite ease-in-out;
+    }
+
+    &.is-last::before {
+      left: 65%;
+    }
+
+    &.correct {
+      color: var(--green);
+    }
+
+    &.incorrect {
+      color: var(--red);
+    }
+  }
+  
+  x-word {
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease-in-out;
+
+    &.marked {
+      border-color: var(--red);
+    }
+  }
+
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    75% {
+      opacity: 0;
+    }
+  }
+
+  #game {
+    display: flex;
+  }
+
+  #results {
+    display: none;
+  }
+</style>
+
+<body>
+  <main>
+    <section id="game">
+      <time></time>
+      <p></p>
+      <input autofocus>
+    </section>
+    <section id="results">
+      <h2>wpm</h2>
+      <h3></h3>
+
+      <h2>accuracy</h2>
+      <h3></h3>
+    </section>
+  </main>
+</body>
+
+<script>
+  const INITIAL_TIME = 30;
+
+  const $time = document.querySelector('time');
+  const $paragraph = document.querySelector('p');
+  const $input = document.querySelector('input');
+  const $game = document.querySelector('#game');
+  const $results = document.querySelector('#results');
+  const $wpm = $results.querySelector('h3')
+  const $accuracy = $results.querySelector('h3:last-child')
+
+  const TEXT = 'sendo texto de prueba que ni tu te lo puedes creer debería estar en ingles pero así partimos'
+
+  let words = []
+  let currentTime = INITIAL_TIME
+
+  initGame()
+  initEvents()
+
+  function initGame () {
+    words = TEXT.split(' ').slice(0, 32)
+    currentTime= INITIAL_TIME
+
+    $time.textContent = currentTime
+
+    $paragraph.innerHTML = words.map((word, index) => {
+      const letters = word.split('')
+
+      return `<x-word>
+        ${letters
+            .map(letter => `<x-letter>${letter}</x-letter>`)
+            .join('')
+        } 
+        </x-word>`
+    }).join('')
+  }
+
+  const $firstWord = $paragraph.querySelector('x-word')
+  $firstWord.classList.add('active')
+  $firstWord.querySelector('x-letter').classList.add('active')
+
+  const intervalId = setInterval( () => {
+    currentTime --
+    $time.textContent = currentTime
+
+    if (currentTime === 0) {
+      clearInterval(intervalId)
+      gameOver()
+    }
+  }, 1000)
+
+  function initEvents(){
+    document.addEventListener('keydown', () => {
+      $input.focus()
+    })
+    $input.addEventListener('keydown', onKeyDown)
+    $input.addEventListener('keyup', onKeyUp)
+  }
+
+  function onKeyDown(event){
+    const $currentWord = $paragraph.querySelector('x-word.active')
+    const $currentLetter = $currentWord.querySelector('x-letter.active')
+
+    const { key } = event
+    console.log(key)
+    
+    if (key === ' ') {
+      event.preventDefault()
+
+      const $nextWord = $currentWord.nextElementSibling
+      const $nextLetter = $nextWord.querySelector('x-letter')
+
+      $currentWord.classList.remove('active', 'marked')
+      $currentLetter.classList.remove('active')
+
+      $nextWord.classList.add('active')
+      $nextLetter.classList.add('active')
+
+      $input.value = ''
+
+      const hasMissedLetters = $currentWord
+        .querySelectorAll('x-letter:not(.correct)').length > 0
+      const classToAdd = hasMissedLetters ? 'marked' : 'correct'
+      $currentWord.classList.add(classToAdd)
+      
+      return
+    }
+
+    if (key === 'Backspace') {
+      const $prevWord = $currentWord.previousElementSibling
+      const $prevLetter = $currentLetter.previousElementSibling
+
+      if(!$prevWord && !$prevLetter) {
+        event.preventDefault()
+        return
+      }
+      
+      const $wordMarked = $paragraph.querySelector('x-word.marked')
+      console.log($wordMarked)
+      if ($wordMarked && !$prevLetter) {
+        event.preventDefault()
+        $prevWord.classList.remove('marked')
+        $prevWord.classList.add('active')
+
+        const $letterToGo = $prevWord.querySelector('x-letter:last-child')
+
+        $currentLetter.classList.remove('active')
+        $letterToGo.classList.add('active')
+
+        $input.value = [
+          ...$prevWord.querySelectorAll('x-letter.correct, x-letter.incorrect')
+        ].map($el => {
+          return $el.classList.contains('correct') ? $el.innerText : '*'
+        }).join('')
+      }
+    }
+  }
+
+  function onKeyUp(){
+    const $currentWord = $paragraph.querySelector('x-word.active')
+    const $currentLetter = $currentWord.querySelector('x-letter.active')
+
+    const currentWord = $currentWord.innerText.trim()
+    $input.maxLength = currentWord.length
+    
+    const $allLetters = $currentWord.querySelectorAll('x-letter')
+    $allLetters.forEach($letter => $letter.classList.remove('correct', 'incorrect'))
+
+    $input.value.split('').forEach((char, index) => {
+      //const $letter = $currentWord.querySelector(`x-letter:nth-child(${index+1})`)
+      const $letter = $allLetters[index]
+      const letterToCheck = currentWord[index]
+
+      const isCorrect = char === letterToCheck
+      const letterClass = isCorrect ? 'correct' : 'incorrect'
+      $letter.classList.add(letterClass)
+    })
+
+    $currentLetter.classList.remove('active', 'is-last')
+    const inputLength = $input.value.length
+    const $nextActiveLetter = $allLetters[inputLength]
+
+    if ($nextActiveLetter) {
+      $nextActiveLetter.classList.add('active')
+    } else {
+      $currentLetter.classList.add('active', 'is-last')
+    }
+  }
+
+  function gameOver() {
+    console.log('game over')
+    $game.style.diplay = 'none'
+    $results.style.display = 'flex'
+
+    // que vuele la imaginación
+  }
+</script>
