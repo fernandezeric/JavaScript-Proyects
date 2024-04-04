@@ -1,103 +1,9 @@
 <!-- Grand Midudev -->
-<title>Monkey Type clone</title>
-<style>
-  :root {
-    color-scheme: light dark;
-    --green: #00b755;
-    --yellow: #daaf38;
-    --red: #ca4754;
-    --black: #222;
-    --gray: #999;
-  }
 
-  body {
-    background: var(--black);
-    font-family: 'Times New Roman', Times, serif, monospace;
-    display: grid;
-    padding: 32px;
-    place-content: center;
-  }
-
-  section {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 500px;
-  }
-
-  time {
-    color: var(--yellow);
-  }
-
-  input {
-    z-index: -999;
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    opacity: 0;
-  }
-
-  p {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px 8px;
-    margin: 0;
-  }
-
-  x-letter {
-    color: var(--gray);
-    position: relative;
-
-    &.active::before {
-      content: '|';
-      color: var(--yellow);
-      font-size: 14px;
-      position: absolute;
-      left: -65%;
-      animation: 1s blink infinite ease-in-out;
-    }
-
-    &.is-last::before {
-      left: 65%;
-    }
-
-    &.correct {
-      color: var(--green);
-    }
-
-    &.incorrect {
-      color: var(--red);
-    }
-  }
-  
-  x-word {
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s ease-in-out;
-
-    &.marked {
-      border-color: var(--red);
-    }
-  }
-
-  @keyframes blink {
-    0%, 50% {
-      opacity: 1;
-    }
-    75% {
-      opacity: 0;
-    }
-  }
-
-  #game {
-    display: flex;
-  }
-
-  #results {
-    display: none;
-  }
-</style>
+<head>
+  <title>Monkey Type clone</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
 
 <body>
   <main>
@@ -108,26 +14,41 @@
     </section>
     <section id="results">
       <h2>wpm</h2>
-      <h3></h3>
+      <h3 id="results-wpm"></h3>
 
       <h2>accuracy</h2>
-      <h3></h3>
+      <h3 id="results-accuracy"></h3>
+
+      <button id="reload-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M10 3a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+          <path d="M3 14l4 1l.5 -.5" />
+          <path d="M12 18v-3l-3 -2.923l.75 -5.077" />
+          <path d="M6 10v-2l4 -1l2.5 2.5l2.5 .5" />
+          <path d="M21 22a1 1 0 0 0 -1 -1h-16a1 1 0 0 0 -1 1" />
+          <path d="M18 21l1 -11l2 -1" />
+        </svg>
+      </button>
     </section>
   </main>
 </body>
 
-<script>
-  const INITIAL_TIME = 30;
+<script type="module">
+  // cambiarlo para poder elegir
+  import { words as INITIAL_WORDS } from './data/wordsSpain.js'
+
+  const INITIAL_TIME = 10;
 
   const $time = document.querySelector('time');
   const $paragraph = document.querySelector('p');
   const $input = document.querySelector('input');
   const $game = document.querySelector('#game');
   const $results = document.querySelector('#results');
-  const $wpm = $results.querySelector('h3')
-  const $accuracy = $results.querySelector('h3:last-child')
-
-  const TEXT = 'sendo texto de prueba que ni tu te lo puedes creer debería estar en ingles pero así partimos'
+  const $wpm = $results.querySelector('#results-wpm');
+  const $accuracy = $results.querySelector('#results-accuracy');
+  const $button = document.querySelector('#reload-button');
 
   let words = []
   let currentTime = INITIAL_TIME
@@ -135,9 +56,16 @@
   initGame()
   initEvents()
 
-  function initGame () {
-    words = TEXT.split(' ').slice(0, 32)
-    currentTime= INITIAL_TIME
+  function initGame() {
+    $game.style.display = 'flex'
+    $results.style.display = 'none'
+    $input.value = ''
+
+    words = INITIAL_WORDS.toSorted(
+      () => Math.random() - 0.5
+    ).slice(0, 32)
+
+    currentTime = INITIAL_TIME
 
     $time.textContent = currentTime
 
@@ -146,42 +74,43 @@
 
       return `<x-word>
         ${letters
-            .map(letter => `<x-letter>${letter}</x-letter>`)
-            .join('')
+          .map(letter => `<x-letter>${letter}</x-letter>`)
+          .join('')
         } 
         </x-word>`
     }).join('')
+
+    const $firstWord = $paragraph.querySelector('x-word')
+    $firstWord.classList.add('active')
+    $firstWord.querySelector('x-letter').classList.add('active')
+
+    const intervalId = setInterval(() => {
+      currentTime--
+      $time.textContent = currentTime
+
+      if (currentTime === 0) {
+        clearInterval(intervalId)
+        gameOver()
+      }
+    }, 1000)
   }
 
-  const $firstWord = $paragraph.querySelector('x-word')
-  $firstWord.classList.add('active')
-  $firstWord.querySelector('x-letter').classList.add('active')
-
-  const intervalId = setInterval( () => {
-    currentTime --
-    $time.textContent = currentTime
-
-    if (currentTime === 0) {
-      clearInterval(intervalId)
-      gameOver()
-    }
-  }, 1000)
-
-  function initEvents(){
+  function initEvents() {
     document.addEventListener('keydown', () => {
       $input.focus()
     })
     $input.addEventListener('keydown', onKeyDown)
     $input.addEventListener('keyup', onKeyUp)
+    $button.addEventListener('click', initGame)
   }
 
-  function onKeyDown(event){
+  function onKeyDown(event) {
     const $currentWord = $paragraph.querySelector('x-word.active')
     const $currentLetter = $currentWord.querySelector('x-letter.active')
 
     const { key } = event
     console.log(key)
-    
+
     if (key === ' ') {
       event.preventDefault()
 
@@ -200,7 +129,7 @@
         .querySelectorAll('x-letter:not(.correct)').length > 0
       const classToAdd = hasMissedLetters ? 'marked' : 'correct'
       $currentWord.classList.add(classToAdd)
-      
+
       return
     }
 
@@ -208,11 +137,11 @@
       const $prevWord = $currentWord.previousElementSibling
       const $prevLetter = $currentLetter.previousElementSibling
 
-      if(!$prevWord && !$prevLetter) {
+      if (!$prevWord && !$prevLetter) {
         event.preventDefault()
         return
       }
-      
+
       const $wordMarked = $paragraph.querySelector('x-word.marked')
       console.log($wordMarked)
       if ($wordMarked && !$prevLetter) {
@@ -234,13 +163,13 @@
     }
   }
 
-  function onKeyUp(){
+  function onKeyUp() {
     const $currentWord = $paragraph.querySelector('x-word.active')
     const $currentLetter = $currentWord.querySelector('x-letter.active')
 
     const currentWord = $currentWord.innerText.trim()
     $input.maxLength = currentWord.length
-    
+
     const $allLetters = $currentWord.querySelectorAll('x-letter')
     $allLetters.forEach($letter => $letter.classList.remove('correct', 'incorrect'))
 
@@ -267,8 +196,22 @@
 
   function gameOver() {
     console.log('game over')
-    $game.style.diplay = 'none'
+    $game.style.display = 'none'
     $results.style.display = 'flex'
+
+    const correctWords = $paragraph.querySelectorAll('x-word.correct').length
+    const correctLetter = $paragraph.querySelectorAll('x-letter.correct').length
+    const incorrectLetter = $paragraph.querySelectorAll('x-letter.incorrect').length
+
+    const totalLetters = correctLetter + incorrectLetter
+    const accuracy = totalLetters > 0
+      ? (correctLetter / totalLetters) * 100
+      : 0
+
+    const wpm = correctWords * 60 / INITIAL_TIME
+
+    $wpm.textContent = wpm
+    $accuracy.textContent = `${accuracy.toFixed(2)}%`
 
     // que vuele la imaginación
   }
